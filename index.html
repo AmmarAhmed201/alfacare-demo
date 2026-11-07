@@ -73,6 +73,28 @@ h3{font-size:14.5px;font-weight:600}
 @media (max-width:420px){.top .demo-tag{display:none}}
 
 /* guide strip (replaces the welcome pop-up) */
+/* tour */
+#tour .t-blk{position:fixed;z-index:90;background:transparent}
+#tour .t-ring{position:fixed;z-index:91;border-radius:14px;pointer-events:none;box-shadow:0 0 0 3px var(--lime),0 0 0 9999px rgba(10,16,8,.58);transition:left .3s,top .3s,width .3s,height .3s}
+#tour .t-card{position:fixed;z-index:92;width:min(380px,calc(100vw - 24px));background:var(--surface);color:var(--fg);border-radius:18px;padding:18px 18px 14px;box-shadow:0 24px 60px -12px rgba(0,0,0,.45);border:1px solid var(--line);animation:tIn .3s ease;transition:left .3s,top .3s}
+@keyframes tIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#tour .t-card.center{left:50%!important;top:50%!important;transform:translate(-50%,-50%);width:min(460px,calc(100vw - 32px));text-align:center;padding:28px 24px 20px;animation:none}
+#tour .t-card.center .t-btns{justify-content:center}
+#tour .t-card.dock{left:8px!important;right:8px;top:auto!important;bottom:calc(8px + env(safe-area-inset-bottom,0px));width:auto}
+#tour .t-logo{width:64px;height:64px;border-radius:18px;margin:0 auto 12px;background:linear-gradient(135deg,var(--brand),var(--lime));display:grid;place-items:center;font:700 40px serif;color:#10180b}
+#tour .t-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+#tour .t-step{font-family:var(--f-display);font-weight:700;font-size:12.5px;color:var(--brand)}
+#tour .t-x{border:0;background:none;color:var(--muted);width:30px;height:30px;border-radius:8px;display:grid;place-items:center;cursor:pointer}
+#tour .t-x:hover{background:var(--surface-2)}
+#tour .t-bar{height:4px;border-radius:4px;background:var(--surface-3);overflow:hidden;margin-bottom:12px}
+#tour .t-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--lime),var(--brand));border-radius:4px;transition:width .3s}
+#tour h3{font-family:var(--f-display);font-size:18px;margin:0 0 6px;line-height:1.4}
+#tour .t-card.center h3{font-size:24px}
+#tour p{margin:0 0 14px;font-size:14.5px;line-height:1.75;color:var(--fg)}
+#tour .t-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#tour .t-btns .spacer{flex:1}
+#tour .t-keys{margin-top:10px;font-size:11.5px;color:var(--muted)}
+@media (max-width:759px){#tour .t-card.dock{padding:14px 14px 12px}#tour .t-card.dock p{font-size:14px;margin-bottom:10px}#tour .t-card.dock h3{font-size:16.5px}}
 .guide{background:var(--surface);border-bottom:1px solid var(--line);padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .guide-in{max-width:1360px;margin-inline:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .guide .stepno{font-family:var(--f-display);font-weight:700;color:var(--brand);font-size:13px;white-space:nowrap}
@@ -633,30 +655,98 @@ function render(){
   if(S.tab==='admin'&&S.adminTab==='cases')bindLine();
 }
 
-/* ================= guide strip ================= */
-const GUIDE=[
- {tab:'cal',t:'<b>التقويم:</b> كل الأخصائيين في شاشة واحدة لأي يوم. دوس على أي مكان فاضي تحجز، أو اسحب الميعاد لمكان تاني تنقله.'},
- {tab:'cal',act:'book',t:'<b>حجز باقة:</b> اختار المريض وعدد الجلسات والأيام والساعة، والنظام بيوزّع الجلسات كلها على التقويم ويبعتله الجدول على واتساب.'},
- {tab:'conf',t:'<b>التأكيدات:</b> كل مريض بيوصله تذكير أوتوماتيك بزراير تأكيد أو اعتذار أو تغيير. جرّب تدوس على الزراير في رسالة الواتساب.'},
- {tab:'room',t:'<b>غرفة الكشف:</b> المريض اللي قدامك بس، بزراير كبيرة، والملاحظة بتتكتب لوحدها. زرار واحد يخلص الجلسة ويجيب اللي بعده.'},
- {tab:'admin',t:'<b>الإدارة:</b> لينك خاص لكل دكتور بيحوّلك، والصافي، والتأمين، والعمولات، والمخزن.'}];
-function renderGuide(){
-  const g=$('#guide');
-  if(!S.guide){g.innerHTML='';return}
-  const i=S.guide-1,st=GUIDE[i];
-  g.innerHTML=`<div class="guide"><div class="guide-in"><span class="stepno">جولة ${i+1} من ${GUIDE.length}</span><div class="txt">${st.t}</div>
-   <div class="dots" aria-hidden="true">${GUIDE.map((_,j)=>`<i class="${j===i?'on':''}"></i>`).join('')}</div>
-   <div class="row"><button class="btn sm" data-gstep="${i-1}" ${i?'':'disabled'}>السابق</button>${i<GUIDE.length-1?`<button class="btn sm primary" data-gstep="${i+1}">التالي</button>`:`<button class="btn sm primary" data-act="gclose">تمام</button>`}<button class="iconbtn" style="width:32px;height:32px" data-act="gclose" aria-label="قفل الجولة">${ic('x')}</button></div></div></div>`;
+/* ================= tour ================= */
+/* A guided tour for first-time visitors: each step opens the right screen, lights up one part of it and explains it in a card next to it (docked at the bottom on phones). The page stays clickable inside the lit part. */
+const TOUR=[
+ {center:1,welcome:1,t:'أهلاً د. أحمد',x:'دي جولة سريعة (حوالي دقيقتين) على نظام Alfa Care. كل خطوة بتوريك ميزة وبتحل مشكلة من مشاكل المركز اليومية. البيانات كلها وهمية، فجرّب براحتك.'},
+ {tab:'cal',el:()=>$('.cal-scroll'),t:'تقويم المركز كله في شاشة واحدة',x:'كل أخصائي عمود بلونه، وأول عمود للكشف والمتابعة مع حضرتك. كل مربع فيه اسم المريض ورقم الجلسة من الباقة (مثلاً 6/10). والخط الأحمر هو الساعة دلوقتي.'},
+ {tab:'cal',el:()=>$('[data-resall]')&&$('[data-resall]').parentElement,t:'فلتر الأخصائيين',x:'دوس على اسم أخصائي تشوف جدوله لوحده، أو "الكل" تشوف المركز كله. الرقم جنب كل اسم هو عدد مواعيده النهارده.'},
+ {tab:'cal',el:()=>$('[data-view]')&&$('[data-view]').parentElement,t:'يوم، أسبوع، شهر',x:'مش النهارده وبكرة بس: أي يوم في السنة. عرض الأسبوع والشهر بيبيّن الأماكن الفاضية بالألوان، ودوسة على أي يوم بتفتحه.'},
+ {tab:'cal',el:()=>$('.side .card'),t:'الشهر في لمحة',x:'تحت كل يوم نقطة: أخضر يعني فاضي، وبرتقاني يعني قرّب يتملى، وأحمر يعني كامل. والجمعة إجازة.'},
+ {tab:'cal',el:()=>$('.add[data-slot]'),t:'احجز من التقويم على طول',x:'أي علامة + هي مكان فاضي. دوس عليها والحجز يفتح على الساعة والأخصائي دول.'},
+ {tab:'cal',el:()=>{const l=[...document.querySelectorAll('[data-appt]')];return l.find(e=>{const a=findA(e.dataset.appt);return a&&a.d===TODAY&&a.t>NOW&&a.st==='booked'&&a.ther!=='af'})||l[0]},t:'نقل ميعاد',x:'دوس على أي ميعاد تشوف تفاصيله وتختار "انقل"، أو اسحبه بالماوس لمكان تاني. النظام مش بيسمح بساعة كاملة أو ميعاد فات، وفيه زرار "تراجع" لو غلطت.'},
+ {tab:'cal',el:()=>$('.banner.delay'),t:'في تأخير؟',x:'بزرار واحد، كل المرضى اللي جايين يوصلهم ميعادهم الجديد بالظبط على واتساب، من غير ولا مكالمة.'},
+ {tab:'cal',el:()=>$('[data-act="reqs"]')&&$('[data-act="reqs"]').closest('.card'),t:'طلبات الحجز وقايمة الانتظار',x:'الطلبات اللي جاية من الموقع ولينكات الدكاترة وواتساب في مكان واحد، وكل طلب بيبقى ميعاد بدوستين. وتحتها قايمة الانتظار: أي ميعاد يتلغي بيتعرض عليهم بالترتيب.'},
+ {tab:'cal',prep:()=>openBook({mode:'package'}),el:()=>$('.drawer'),t:'حجز باقة جلسات مرة واحدة',x:'تختار المريض وعدد الجلسات والأيام والساعة والأخصائي، والنظام بيوزّع الجلسات كلها على التقويم. لو ساعة كاملة بيعدّلها لوحده ويقولك، والجدول كله بيتبعت للمريض على واتساب.'},
+ {tab:'conf',el:()=>$('[data-cdate]')&&$('[data-cdate]').parentElement,t:'تأكيد المواعيد من غير تليفون',x:'قبل كل ميعاد بيوم بيتبعت تذكير أوتوماتيك على واتساب. اختار أي يوم تشوف كام واحد أكّد، والدايرة بتقولك النسبة.'},
+ {tab:'conf',el:()=>$('.cgroup')&&$('.cgroup').parentElement,t:'مين محتاج مكالمة',x:'القايمة متقسمة لوحدها: مردّش (كلّمه)، وعايز يغيّر (انقله بدوسة)، واعتذر (مكانه بيتعرض على الانتظار)، وأكّد.'},
+ {tab:'conf',el:()=>$('#view .phone'),t:'رسالة المريض على واتساب',x:'ده اللي المريض بيشوفه بالظبط: اسمه وميعاده ورقم جلسته، وزراير تأكيد واعتذار وتغيير. جرّب تدوس على الزراير، والقايمة اللي جنبها هتتحدث لوحدها.'},
+ {tab:'patients',el:()=>$('#view .chips'),t:'المرضى والباقات',x:'فلتر "الباقة قرّبت تخلص" عشان تبعت عرض تجديد، و"فاتته جلسة" عشان رسالة "وحشتنا"، والمحوّلين، والتأمين.'},
+ {tab:'patients',el:()=>$('#view .list .item'),t:'كل مريض وجلساته',x:'كل مريض قدامه شريط جلساته: اللي خلص واللي فاضل. دوس عليه تشوف ملفه، ومنه "غيّر كل المواعيد الجاية" بتنقل الباقة كلها بدوسة.'},
+ {tab:'room',el:()=>$('.pain-scale')&&$('.pain-scale').closest('.card'),t:'أوضة الكشف',x:'المريض اللي قدامك بس: درجة الوجع من 0 لـ 10 بدوسة، واللي اتعمل في الجلسة بزراير كبيرة، والملاحظة بتتكتب لوحدها.'},
+ {tab:'room',el:()=>$('[data-act="focus"]'),t:'وضع التركيز',x:'بيخفي أي حاجة تانية على الشاشة. وزرار "إنهاء والتالي" بيسجّل الجلسة، ويبعت التمارين للمريض، ويحدّث الدكتور اللي حوّله، ويجيب اللي بعده.'},
+ {tab:'admin',at:'refs',el:()=>$('#view [data-ref]'),t:'الدكاترة اللي بيحوّلولك',x:'كل دكتور ليه لينك خاص من غير باسورد: بيشوف فيه تقدم مرضاه ومنحنى الوجع، ويحوّل منه مريض جديد. دوس على أي دكتور تشوف صفحته زي ما هو شايفها.'},
+ {tab:'admin',at:'money',el:()=>$('#view .hero-num')&&$('#view .hero-num').closest('.card'),t:'الفلوس',x:'الصافي النهارده والأسبوع والشهر، والفلوس جاية منين (مباشر، تحويلات، تأمين)، ومستحقات كل شركة تأمين، وعمولة كل دكتور، وتقفيل الدُرج.'},
+ {tab:'admin',at:'cases',el:()=>$('#view .hbar')&&$('#view .hbar').closest('.card'),t:'إحصائيات الحالات',x:'أكتر الحالات اللي بتيجي المركز، ومتوسط عدد الجلسات ونسبة التحسن لكل حالة. دوس على أي حالة تشوف تفاصيلها.'},
+ {tab:'admin',at:'stock',el:()=>$('#view .list .item'),t:'المخزن',x:'المستلزمات بتتخصم لوحدها مع كل جلسة، والنظام بينبّهك قبل ما الصنف يخلص، وبيجهّز طلب المورد.'},
+ {el:()=>$('#role'),t:'كل واحد بيشوف اللي يخصه',x:'غيّر من هنا وشوف: السكرتارية مبتشوفش الأرباح، والأخصائي بيشوف أوضته وجدوله بس.'},
+ {center:1,end:1,t:'كده شفت كل حاجة',x:'جرّب بنفسك: احجز باقة، وانقل ميعاد، ودوس على زراير الواتساب. ولو حبيت تشوف الجولة تاني، دوس على علامة ؟ اللي فوق.'}];
+const TR={i:-1};
+function renderGuide(){const g=$('#guide');if(g)g.innerHTML=''}
+function guideTo(i){tourTo(i)}
+function tourTo(i){
+  if(i<0)i=0;if(i>=TOUR.length)return tourEnd();
+  TR.i=i;S.guide=1;const st=TOUR[i];
+  closeDrawer();S.moving=null;S.picker=false;
+  if(st.tab){
+    if(!ROLE_TABS[S.role].includes(st.tab)){S.role='owner';$('#role').value='owner'}
+    S.room.focus=false;
+    if(st.tab==='cal'){S.view='day';S.date=TODAY;S.res=new Set(RES.map(r=>r.id))}
+    if(st.tab==='conf'){S.confDate=TMR;S.confSel=null;S.rulesOpen=false}
+    if(st.at)S.adminTab=st.at;
+    go(st.tab);
+  }else{S.room.focus=false;render();window.scrollTo({top:0})}
+  if(st.prep)st.prep();
+  drawTour();
 }
-function guideTo(i){
-  S.guide=i+1;const st=GUIDE[i];closeDrawer();
-  if(!ROLE_TABS[S.role].includes(st.tab)){S.role='owner';$('#role').value='owner'}
-  if(st.tab==='cal'){S.view='day';S.date=TODAY}
-  if(st.tab==='conf')S.confDate=TMR;
-  if(st.tab==='admin')S.adminTab='refs';
-  go(st.tab);
-  if(st.act==='book')openBook({mode:'package'});
+function tourEnd(){TR.i=-1;S.guide=0;try{localStorage.setItem('ac-guide','done')}catch(e){}const L=$('#tour');if(L)L.remove()}
+function drawTour(){
+  let L=$('#tour');if(TR.i<0){if(L)L.remove();return}
+  if(!L){L=document.createElement('div');L.id='tour';document.body.appendChild(L)}
+  const st=TOUR[TR.i],n=TOUR.length,i=TR.i;
+  const btns=st.welcome?`<button class="btn primary" data-tour="next">ابدأ الجولة ${ic('next','width="16" height="16"')}</button><button class="btn ghost" data-tour="end">هجرّب لوحدي</button>`
+    :st.end?`<button class="btn primary" data-tour="end">يلا نجرّب</button><button class="btn ghost" data-tour="0">الجولة من الأول</button>`
+    :`<button class="btn primary" data-tour="next">${i===n-2?'آخر خطوة':'التالي'} ${ic('next','width="16" height="16"')}</button><button class="btn" data-tour="prev">السابق</button><span class="spacer"></span><button class="btn ghost sm" data-tour="end">تخطي الجولة</button>`;
+  L.innerHTML=`<div class="t-blk"></div><div class="t-blk"></div><div class="t-blk"></div><div class="t-blk"></div><div class="t-ring"></div>
+   <section class="t-card${st.center?' center':''}" role="dialog" aria-live="polite" aria-label="جولة في النظام">
+    ${st.center?`<div class="t-logo"><b>α</b></div>`:`<div class="t-top"><span class="t-step">خطوة ${i} من ${n-2}</span><button class="t-x" data-tour="end" aria-label="قفل الجولة">${ic('x','width="18" height="18"')}</button></div><div class="t-bar"><i style="width:${i/(n-2)*100}%"></i></div>`}
+    <h3>${st.t}</h3><p>${st.x}</p><div class="t-btns">${btns}</div>
+    ${!st.center?'<div class="t-keys hide-sm">أسهم الكيبورد بتمشّي الجولة، وEsc تقفلها</div>':''}
+   </section>`;
+  placeTour(true);
 }
+function placeTour(scroll){
+  const L=$('#tour');if(!L||TR.i<0)return;
+  const st=TOUR[TR.i],el=st.el&&st.el();
+  const blk=L.querySelectorAll('.t-blk'),ring=L.querySelector('.t-ring'),card=L.querySelector('.t-card');
+  const vw=document.documentElement.clientWidth,vh=innerHeight,phone=vw<760;
+  if(st.center||!el){
+    ring.style.display='none';blk.forEach((b,k)=>b.style.cssText=k?'display:none':'left:0;top:0;width:100%;height:100%;background:rgba(10,16,8,.62)');
+    card.classList.add('center');card.classList.remove('dock');card.style.left=card.style.top='';return}
+  if(scroll){
+    const r0=el.getBoundingClientRect();
+    if(phone){window.scrollBy(0,r0.top-90)}else if(r0.top<70||r0.bottom>vh-20){window.scrollBy(0,r0.top-Math.max(80,(vh-Math.min(r0.height,vh-200))/2))}
+    const sc=el.closest('.cal-scroll,.chips.scroll');if(sc&&sc!==el){const rs=sc.getBoundingClientRect(),re=el.getBoundingClientRect();if(re.top<rs.top+60||re.bottom>rs.bottom)sc.scrollTop+=re.top-rs.top-90}
+  }
+  const r=el.getBoundingClientRect(),pad=6,top0=phone?4:0;
+  const x=Math.max(4,r.left-pad),y=Math.max(top0+4,r.top-pad),x2=Math.min(vw-4,r.right+pad),y2=Math.min(vh-4,r.bottom+pad),w=Math.max(0,x2-x),h=Math.max(0,y2-y);
+  ring.style.cssText=`display:block;left:${x}px;top:${y}px;width:${w}px;height:${h}px`;
+  const bs=[`left:0;top:0;width:100%;height:${y}px`,`left:0;top:${y2}px;width:100%;height:${Math.max(0,vh-y2)}px`,`left:0;top:${y}px;width:${x}px;height:${h}px`,`left:${x2}px;top:${y}px;width:${Math.max(0,vw-x2)}px;height:${h}px`];
+  blk.forEach((b,k)=>b.style.cssText=bs[k]);
+  card.classList.remove('center');
+  if(phone){card.classList.add('dock');card.style.left=card.style.top='';return}
+  card.classList.remove('dock');
+  const cw=card.offsetWidth,ch=card.offsetHeight,g=16;let cx=null,cy=null;
+  if(vh-y2>=ch+g){cy=y2+g}else if(y>=ch+g+60){cy=y-ch-g}
+  if(cy!=null){cx=Math.min(Math.max(12,x2-cw),vw-cw-12)}
+  else if(x>=cw+g+8){cx=x-cw-g;cy=Math.min(Math.max(70,y),vh-ch-12)}
+  else if(vw-x2>=cw+g+8){cx=x2+g;cy=Math.min(Math.max(70,y),vh-ch-12)}
+  else{cx=24;cy=vh-ch-24}
+  card.style.left=cx+'px';card.style.top=cy+'px';
+}
+addEventListener('resize',()=>placeTour(false));
+addEventListener('scroll',()=>placeTour(false),true);
+setInterval(()=>{if(TR.i>=0)placeTour(false)},350);
 
 /* ================= CALENDAR ================= */
 function vCal(){
@@ -1239,7 +1329,8 @@ document.addEventListener('click',e=>{
   const d=b.dataset;
   if(d.tab){closeDrawer();return go(d.tab)}
   if(d.act==='close')return closeDrawer();
-  if(d.act==='guide'){return guideTo(0)}
+  if(d.tour!==undefined){const v=d.tour;return v==='next'?tourTo(TR.i+1):v==='prev'?tourTo(TR.i-1):v==='end'?tourEnd():tourTo(+v)}
+  if(d.act==='guide'){return tourTo(0)}
   if(d.gstep!==undefined)return guideTo(+d.gstep);
   if(d.act==='gclose'){S.guide=0;try{localStorage.setItem('ac-guide','done')}catch(err){}return renderGuide()}
   // calendar
@@ -1355,15 +1446,15 @@ document.addEventListener('change',e=>{
   if(id==='bsend')B.send=e.target.checked;
   if(id&&id.startsWith('r-')){S.rules[id.slice(2)]=e.target.value;toast('اتحفظت القاعدة',['بتتطبق على كل المواعيد الجاية'])}
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(S.moving){S.moving=null;render()}else closeDrawer()}});
+document.addEventListener('keydown',e=>{if(TR.i>=0&&!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)){if(e.key==='Escape')return tourEnd();if(e.key==='ArrowLeft')return tourTo(TR.i+1);if(e.key==='ArrowRight'&&TR.i>0)return tourTo(TR.i-1)}if(e.key==='Escape'){if(S.moving){S.moving=null;render()}else closeDrawer()}});
 
 /* ================= boot ================= */
 (function(){
   const h=(location.hash||'').slice(1);
   if(ROLE_TABS.owner.includes(h))S.tab=h;
   let seen=false;try{seen=localStorage.getItem('ac-guide')==='done'}catch(e){}
-  if(!seen&&!h)S.guide=1;
   render();
+  if((!seen&&!h)||/[?&]tour/.test(location.search))tourTo(0);
   addEventListener('hashchange',()=>{const t=location.hash.slice(1);if(ROLE_TABS[S.role].includes(t)&&t!==S.tab){S.tab=t;render()}});
 })();
 </script>
